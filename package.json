@@ -1,0 +1,11 @@
+{
+  "name": "squid-iphone-guard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "iPhone 防入侵與個資外洩健檢工具（PWA）",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "start": "python3 -m http.server 8080"
+  }
+}

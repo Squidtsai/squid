@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b6e4f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="iPhone 防護">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.pwnedpasswords.com; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>iPhone 防護健檢</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>iPhone 防護健檢</h1>
+    <p class="sub">所有檢查都在你的手機上完成，不會上傳任何個人資料。</p>
+  </header>
+
+  <main>
+    <!-- 健檢 -->
+    <section id="tab-check" class="tab active" aria-labelledby="nav-check">
+      <div class="score-card">
+        <div class="ring" id="ring" role="img" aria-label="防護分數">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="52"/>
+          </svg>
+          <div class="ring-text"><span id="score">0</span><small>分</small></div>
+        </div>
+        <div class="score-info">
+          <p id="score-label" class="score-label">開始檢查吧</p>
+          <p id="score-detail" class="muted"></p>
+          <p id="critical-left" class="warn-text"></p>
+        </div>
+      </div>
+
+      <div class="filters" role="group" aria-label="篩選">
+        <button class="chip active" data-filter="todo">待處理</button>
+        <button class="chip" data-filter="critical">必做</button>
+        <button class="chip" data-filter="all">全部</button>
+        <button class="chip" data-filter="done">已完成</button>
+      </div>
+
+      <div id="checklist"></div>
+
+      <p class="muted small center">
+        設定路徑以 iOS 18 以上為準。iOS 17 以前，「設定 &gt; App &gt; Safari」等項目在「設定 &gt; Safari」。<br>
+        <button class="link-btn" id="reset-progress">重設進度</button>
+      </p>
+    </section>
+
+    <!-- 連結檢查 -->
+    <section id="tab-link" class="tab" aria-labelledby="nav-link">
+      <h2>可疑簡訊／連結檢查</h2>
+      <p class="muted">把收到的簡訊、LINE 訊息或網址貼在下方。分析只在手機上執行，<strong>不會打開連結</strong>，也不會上傳內容。</p>
+      <textarea id="link-input" rows="6" placeholder="例如：【中華郵政】您的包裹因地址不完整無法投遞，請於24小時內更新：https://post-tw.top/a1"></textarea>
+      <div class="row">
+        <button class="btn primary" id="link-go">分析</button>
+        <button class="btn" id="link-paste">從剪貼板貼上</button>
+        <button class="btn ghost" id="link-clear">清除</button>
+      </div>
+      <div id="link-result" aria-live="polite"></div>
+      <details class="tips">
+        <summary>判斷詐騙的 5 個原則</summary>
+        <ol>
+          <li>政府、銀行、Apple <strong>不會</strong>用簡訊連結要你輸入信用卡或密碼。</li>
+          <li>台灣政府網站一律以 <code>.gov.tw</code> 結尾。</li>
+          <li>遇到「24 小時內」、「帳戶凍結」這類催促，先停下來，自己打開官方 App 或打官方客服電話確認。</li>
+          <li>ATM、網銀沒有「解除分期」或「取消設定」這種功能。</li>
+          <li>不確定時撥 <a href="tel:165">165 反詐騙專線</a>。</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- 密碼 -->
+    <section id="tab-pw" class="tab" aria-labelledby="nav-pw">
+      <h2>密碼外洩與強度檢查</h2>
+      <p class="muted">使用 Have I Been Pwned 的 k-匿名查詢：只會送出密碼雜湊值的<strong>前 5 個字元</strong>，你的密碼本身不會離開這支手機，也不會被儲存。</p>
+      <div class="pw-wrap">
+        <input id="pw-input" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="輸入要檢查的密碼">
+        <button class="btn ghost small-btn" id="pw-toggle" aria-label="顯示密碼">顯示</button>
+      </div>
+      <div class="meter"><div id="pw-meter"></div></div>
+      <p id="pw-strength" class="muted"></p>
+      <ul id="pw-tips" class="tip-list"></ul>
+      <button class="btn primary" id="pw-go">檢查是否外洩</button>
+      <div id="pw-result" aria-live="polite"></div>
+      <details class="tips">
+        <summary>好密碼怎麼來？</summary>
+        <ul>
+          <li>交給 iPhone 內建的「密碼」App 自動產生並記住，每個網站都不一樣。</li>
+          <li>要自己記的（Apple 帳號、手機解鎖）：用 4 個以上不相關的詞，例如「藍色-火車-香蕉-跳舞-27」。</li>
+          <li>能用通行密鑰（Passkey）的服務，優先改用通行密鑰。</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 應變 -->
+    <section id="tab-help" class="tab" aria-labelledby="nav-help">
+      <h2>懷疑手機被入侵？</h2>
+      <h3>徵兆自我檢查</h3>
+      <div id="signs"></div>
+      <div id="signs-result" aria-live="polite"></div>
+      <h3>應變步驟</h3>
+      <ol id="incident" class="steps"></ol>
+      <div class="help-box">
+        <p><strong>緊急聯絡</strong></p>
+        <p><a class="btn" href="tel:165">📞 165 反詐騙</a> <a class="btn" href="tel:110">📞 110 報案</a></p>
+        <p class="muted small">Apple 帳號：account.apple.com ・ 遺失手機：icloud.com/find</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" role="tablist">
+    <button id="nav-check" class="active" data-tab="tab-check" role="tab"><span>🛡️</span>健檢</button>
+    <button id="nav-link" data-tab="tab-link" role="tab"><span>🔗</span>連結檢查</button>
+    <button id="nav-pw" data-tab="tab-pw" role="tab"><span>🔑</span>密碼</button>
+    <button id="nav-help" data-tab="tab-help" role="tab"><span>🚨</span>應變</button>
+  </nav>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
